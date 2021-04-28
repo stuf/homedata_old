@@ -1,13 +1,24 @@
 const { InfluxDB, Point } = require('@influxdata/influxdb-client');
 const { url, token, org, bucket } = require('./env');
+const sources = require('./sources');
 
 const influxDb = new InfluxDB({ url, token });
 const writeApi = influxDb.getWriteApi(org, bucket, 'ms');
 
-const sources = require('./sources');
+const LOG_FREQ = 10;
+
+const log = msg => {
+  const ts = new Date();
+  const datetime = ts.toISOString();
+
+  console.log(`[homedata:${datetime}]`, msg);
+};
 
 function main() {
+  let n = 0;
+  log('Collecting data from Ruuvitag');
   sources.ruuvitag.onValue(v => {
+    n = n + 1;
     const point = new Point('ruuvitag');
 
     point
@@ -25,7 +36,10 @@ function main() {
       .intField('measurementSequenceNumber', v.measurementSequenceNumber);
 
     writeApi.writePoint(point);
-    console.log('  => %s', point.toLineProtocol());
+    // console.log('  => %s', point.toLineProtocol());
+    if (n % LOG_FREQ === 0) {
+      log(`Logged ${n} data points.`);
+    }
   });
 
   sources.ruuvitag.onEnd(() => {
