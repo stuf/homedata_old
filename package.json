@@ -1,0 +1,16 @@
+{
+  "name": "homedata",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@influxdata/influxdb-client": "^1.12.0",
+    "@influxdata/influxdb-client-apis": "^1.12.0",
+    "dotenv": "^8.2.0",
+    "kefir": "^3.8.8",
+    "node-ruuvitag": "^4.6.1"
+  },
+  "devDependencies": {
+    "@types/kefir": "^3.8.5"
+  }
+}
