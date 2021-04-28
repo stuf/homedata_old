@@ -5,18 +5,25 @@ const sources = require('./sources');
 const influxDb = new InfluxDB({ url, token });
 const writeApi = influxDb.getWriteApi(org, bucket, 'ms');
 
-const LOG_FREQ = 10;
+const LOG_FREQ = 100;
 
-const log = msg => {
+const _log = (level, msg) => {
   const ts = new Date();
   const datetime = ts.toISOString();
+  console[level](`[homedata:${level}:${datetime}]`, msg);
+};
 
-  console.log(`[homedata:${datetime}]`, msg);
+const log = msg => {
+  _log('log', msg);
+};
+
+const error = msg => {
+  _log('error', msg);
 };
 
 function main() {
   let n = 0;
-  log('Collecting data from Ruuvitag');
+  log(`Collecting data from Ruuvitag; LOG_FREQ=${LOG_FREQ}`);
   sources.ruuvitag.onValue(v => {
     n = n + 1;
     const point = new Point('ruuvitag');
@@ -47,7 +54,7 @@ function main() {
   });
 
   sources.ruuvitag.onError(err => {
-    console.error('err', err);
+    error('Error!', err.message);
   });
 }
 
