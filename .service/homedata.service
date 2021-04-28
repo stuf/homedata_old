@@ -1,0 +1,13 @@
+[Unit]
+Description=Homedata data collector
+Documentation=https://github.com/stuf/homedata
+After=network.target
+
+[Service]
+Type=simple
+User=homedata
+ExecStart=/home/homedata/homedata/collect.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
